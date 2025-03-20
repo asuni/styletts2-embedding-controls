@@ -23,7 +23,7 @@ import torchaudio
 import librosa
 from nltk.tokenize import word_tokenize
 
-STYLETTS_PATH = "/home/asuni/work/deep/StyleTTS2/"
+STYLETTS_PATH = os.path.abspath("StyleTTS2/")
 sys.path.insert(0, STYLETTS_PATH)
 
 from models import *
@@ -39,17 +39,17 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 class StyleTTS():
     def __init__(self):
-        
-       
+
+
         original_cwd = os.getcwd()
         os.chdir(STYLETTS_PATH)
-        
+
         self.mean, self.std = -4, 4
 
         self.textcleaner = TextCleaner()
         self.phonemizer = phonemizer.backend.EspeakBackend(language='en-us', preserve_punctuation=True,  with_stress=True)
 
-        
+
         config = yaml.safe_load(open(STYLETTS_PATH+"Models/LibriTTS/config.yml"))
 
         # load pretrained ASR model
@@ -97,7 +97,7 @@ class StyleTTS():
             clamp=False
         )
         os.chdir(original_cwd)
-        
+
     def length_to_mask(self, lengths):
         mask = torch.arange(lengths.max()).unsqueeze(0).expand(lengths.shape[0], -1).type_as(lengths)
         mask = torch.gt(mask + 1, lengths.unsqueeze(1))
@@ -120,7 +120,7 @@ class StyleTTS():
         with torch.no_grad():
             ref_s = self.model.style_encoder(mel_tensor.unsqueeze(1))
             ref_p = self.model.predictor_encoder(mel_tensor.unsqueeze(1))
-        
+
         return torch.cat([ref_s, ref_p], dim=1)
 
     def inference(self, text, ref_s, alpha=0.3, beta=0.7, diffusion_steps=5, embedding_scale=1):
