@@ -50,7 +50,7 @@ class StyleTTS():
         self.phonemizer = phonemizer.backend.EspeakBackend(language='en-us', preserve_punctuation=True,  with_stress=True)
 
 
-        config = yaml.safe_load(open(STYLETTS_PATH+"Models/LibriTTS/config.yml"))
+        config = yaml.safe_load(open(STYLETTS_PATH+"/Models/LibriTTS/config.yml"))
 
         # load pretrained ASR model
         ASR_config = config.get('ASR_config', False)
